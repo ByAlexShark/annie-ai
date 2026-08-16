@@ -76,3 +76,8 @@ class Service(TimestampMixin, Base):
     area: Mapped["CareArea"] = relationship(
         back_populates="services",
     )
+
+    professional_services: Mapped[list["ProfessionalService"]] = relationship(
+    back_populates="service",
+    cascade="all, delete-orphan",
+)

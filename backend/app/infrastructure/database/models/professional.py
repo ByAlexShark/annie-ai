@@ -53,3 +53,8 @@ class Professional(TimestampMixin, Base):
     appointments: Mapped[list["Appointment"]] = relationship(
         back_populates="professional",
     )
+
+    professional_services: Mapped[list["ProfessionalService"]] = relationship(
+    back_populates="professional",
+    cascade="all, delete-orphan",
+)

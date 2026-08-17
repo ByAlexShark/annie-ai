@@ -12,6 +12,9 @@ from app.presentation.api.services import (
 from app.presentation.api.professional_services import (
     router as professional_services_router,
 )
+from app.presentation.api.schedules import (
+    router as schedules_router,
+)
 
 
 api_router = APIRouter(
@@ -32,4 +35,8 @@ api_router.include_router(
 
 api_router.include_router(
     professional_services_router
+)
+
+api_router.include_router(
+    schedules_router
 )

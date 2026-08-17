@@ -31,6 +31,45 @@ class SQLAlchemyAppointmentRepository(
 
         return list(result.scalars().all())
 
+    async def search(
+        self,
+        patient_id: int | None = None,
+        professional_id: int | None = None,
+        appointment_date: date | None = None,
+        status: AppointmentStatus | None = None,
+    ) -> list[Appointment]:
+
+        statement = select(Appointment)
+
+        if patient_id is not None:
+            statement = statement.where(
+                Appointment.patient_id == patient_id
+            )
+
+        if professional_id is not None:
+            statement = statement.where(
+                Appointment.professional_id == professional_id
+            )
+
+        if appointment_date is not None:
+            statement = statement.where(
+                Appointment.appointment_date == appointment_date
+            )
+
+        if status is not None:
+            statement = statement.where(
+                Appointment.status == status
+            )
+
+        statement = statement.order_by(
+            Appointment.appointment_date,
+            Appointment.start_time,
+        )
+
+        result = await self.session.execute(statement)
+
+        return list(result.scalars().all())
+
     async def get_by_id(
         self,
         appointment_id: int,

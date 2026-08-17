@@ -2,12 +2,23 @@ from abc import ABC, abstractmethod
 from datetime import date
 
 from app.infrastructure.database.models.appointment import Appointment
+from app.domain.enums.appointment_status import AppointmentStatus
 
 
 class AppointmentRepository(ABC):
 
     @abstractmethod
     async def get_all(self) -> list[Appointment]:
+        pass
+
+    @abstractmethod
+    async def search(
+        self,
+        patient_id: int | None = None,
+        professional_id: int | None = None,
+        appointment_date: date | None = None,
+        status: AppointmentStatus | None = None,
+    ) -> list[Appointment]:
         pass
 
     @abstractmethod

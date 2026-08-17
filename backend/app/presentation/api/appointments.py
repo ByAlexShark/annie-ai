@@ -44,7 +44,17 @@ from app.presentation.schemas.appointment import (
     AppointmentReschedule,
     AppointmentResponse,
 )
-
+from datetime import date
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    status,
+)
+from app.domain.enums.appointment_status import (
+    AppointmentStatus,
+)
 
 router = APIRouter(
     prefix="/appointments",
@@ -107,11 +117,31 @@ def get_appointment_service(
     response_model=list[AppointmentResponse],
 )
 async def list_appointments(
+    patient_id: int | None = Query(
+        default=None,
+        gt=0,
+    ),
+    professional_id: int | None = Query(
+        default=None,
+        gt=0,
+    ),
+    appointment_date: date | None = Query(
+        default=None,
+    ),
+    appointment_status: AppointmentStatus | None = Query(
+        default=None,
+        alias="status",
+    ),
     service: AppointmentService = Depends(
         get_appointment_service
     ),
 ):
-    return await service.list_appointments()
+    return await service.list_appointments(
+        patient_id=patient_id,
+        professional_id=professional_id,
+        appointment_date=appointment_date,
+        status=appointment_status,
+    )
 
 
 @router.get(

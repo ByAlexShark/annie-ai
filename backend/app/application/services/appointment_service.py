@@ -87,9 +87,18 @@ class AppointmentService:
 
     async def list_appointments(
         self,
+        patient_id: int | None = None,
+        professional_id: int | None = None,
+        appointment_date: date | None = None,
+        status: AppointmentStatus | None = None,
     ) -> list[Appointment]:
 
-        return await self.appointment_repository.get_all()
+        return await self.appointment_repository.search(
+            patient_id=patient_id,
+            professional_id=professional_id,
+            appointment_date=appointment_date,
+            status=status,
+        )
 
     async def get_appointment(
         self,

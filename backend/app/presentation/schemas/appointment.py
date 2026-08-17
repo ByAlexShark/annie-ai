@@ -29,6 +29,12 @@ class AppointmentCreate(BaseModel):
         max_length=30,
     )
 
+class AppointmentReschedule(BaseModel):
+
+    appointment_date: date
+
+    start_time: time
+
 
 class AppointmentResponse(BaseModel):
 
@@ -56,3 +62,5 @@ class AppointmentResponse(BaseModel):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+    

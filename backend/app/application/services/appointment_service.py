@@ -56,6 +56,12 @@ class AppointmentSlotUnavailableError(Exception):
 class AppointmentInvalidScheduleError(Exception):
     pass
 
+class AppointmentInvalidStatusError(Exception):
+    pass
+
+class AppointmentRescheduleError(Exception):
+    pass
+
 
 class AppointmentService:
 
@@ -189,6 +195,90 @@ class AppointmentService:
         )
 
         return await self.appointment_repository.create(
+            appointment
+        )
+
+    async def cancel_appointment(
+        self,
+        appointment_id: int,
+    ) -> Appointment:
+
+        appointment = (
+            await self.appointment_repository.get_by_id(
+                appointment_id
+            )
+        )
+
+        if appointment is None:
+            raise AppointmentNotFoundError(
+                "Appointment not found."
+            )
+
+        if appointment.status not in (
+            AppointmentStatus.PENDING,
+            AppointmentStatus.CONFIRMED,
+        ):
+            raise AppointmentInvalidStatusError(
+                "Only pending or confirmed appointments can be cancelled."
+            )
+
+        appointment.status = AppointmentStatus.CANCELLED
+
+        return await self.appointment_repository.update(
+            appointment
+        ) 
+    async def reschedule_appointment(
+        self,
+        appointment_id: int,
+        appointment_date: date,
+        start_time: time,
+    ) -> Appointment:
+
+        appointment = (
+            await self.appointment_repository.get_by_id(
+                appointment_id
+            )
+        )
+
+        if appointment is None:
+            raise AppointmentNotFoundError(
+                "Appointment not found."
+            )
+
+        if appointment.status not in (
+            AppointmentStatus.PENDING,
+            AppointmentStatus.CONFIRMED,
+        ):
+            raise AppointmentInvalidStatusError(
+                "Only pending or confirmed appointments "
+                "can be rescheduled."
+            )
+
+        available_slots = (
+            await self.availability_service.get_available_slots(
+                professional_id=appointment.professional_id,
+                service_id=appointment.service_id,
+                requested_date=appointment_date,
+            )
+        )
+        requested_slot = start_time.strftime("%H:%M")
+
+        if requested_slot not in available_slots:
+            raise AppointmentSlotUnavailableError(
+                "The requested appointment slot is not available."
+            )
+
+        end_time = await self._calculate_end_time(
+            professional_id=appointment.professional_id,
+            appointment_date=appointment_date,
+            start_time=start_time,
+        )
+
+        appointment.appointment_date = appointment_date
+        appointment.start_time = start_time
+        appointment.end_time = end_time
+
+        return await self.appointment_repository.update(
             appointment
         )
 

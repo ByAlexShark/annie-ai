@@ -77,3 +77,13 @@ class SQLAlchemyAppointmentRepository(
         await self.session.refresh(appointment)
 
         return appointment
+
+    async def update(
+        self,
+        appointment: Appointment,
+    ) -> Appointment:
+
+        await self.session.commit()
+        await self.session.refresh(appointment)
+
+        return appointment

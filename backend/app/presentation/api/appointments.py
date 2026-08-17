@@ -15,6 +15,7 @@ from app.application.services.appointment_service import (
     AppointmentServiceNotAssignedError,
     AppointmentServiceNotFoundError,
     AppointmentSlotUnavailableError,
+    AppointmentInvalidStatusError,
 )
 from app.application.services.availability_service import (
     AvailabilityService,
@@ -40,6 +41,7 @@ from app.infrastructure.database.service_repository import (
 from app.infrastructure.database.session import get_db
 from app.presentation.schemas.appointment import (
     AppointmentCreate,
+    AppointmentReschedule,
     AppointmentResponse,
 )
 
@@ -174,6 +176,67 @@ async def create_appointment(
         AppointmentInvalidScheduleError,
     ) as exc:
 
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        ) from exc
+
+@router.patch(
+    "/{appointment_id}/cancel",
+    response_model=AppointmentResponse,
+)
+async def cancel_appointment(
+    appointment_id: int,
+    service: AppointmentService = Depends(
+        get_appointment_service
+    ),
+):
+    try:
+        return await service.cancel_appointment(
+            appointment_id
+        )
+
+    except AppointmentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+    except AppointmentInvalidStatusError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        ) from exc
+    
+@router.patch(
+    "/{appointment_id}/reschedule",
+    response_model=AppointmentResponse,
+)
+async def reschedule_appointment(
+    appointment_id: int,
+    data: AppointmentReschedule,
+    service: AppointmentService = Depends(
+        get_appointment_service
+    ),
+):
+    try:
+        return await service.reschedule_appointment(
+            appointment_id=appointment_id,
+            appointment_date=data.appointment_date,
+            start_time=data.start_time,
+        )
+
+    except AppointmentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+    except (
+        AppointmentInvalidStatusError,
+        AppointmentSlotUnavailableError,
+        AppointmentInvalidScheduleError,
+    ) as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(exc),

@@ -31,3 +31,12 @@ class AppointmentRepository(ABC):
         appointment: Appointment,
     ) -> Appointment:
         pass
+
+    @abstractmethod
+    async def update(
+        self,
+        appointment: Appointment,
+    ) -> Appointment:
+        pass
+
+    

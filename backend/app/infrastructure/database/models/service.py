@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from decimal import Decimal
 
 from sqlalchemy import (
@@ -15,6 +17,12 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.base import Base, TimestampMixin
+
+if TYPE_CHECKING:
+    from app.infrastructure.database.models.care_area import CareArea
+    from app.infrastructure.database.models.professional_service import (
+        ProfessionalService,
+    )
 
 
 class Service(TimestampMixin, Base):

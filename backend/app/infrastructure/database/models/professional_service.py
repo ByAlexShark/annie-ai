@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.base import Base, TimestampMixin
 
+if TYPE_CHECKING:
+    from app.infrastructure.database.models.professional import Professional
+    from app.infrastructure.database.models.service import Service
 
 class ProfessionalService(TimestampMixin, Base):
     __tablename__ = "professional_services"

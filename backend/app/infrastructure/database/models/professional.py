@@ -16,6 +16,7 @@ if TYPE_CHECKING:
         ProfessionalService,
     )
 
+
 class Professional(TimestampMixin, Base):
     __tablename__ = "professionals"
 
@@ -65,6 +66,6 @@ class Professional(TimestampMixin, Base):
     )
 
     professional_services: Mapped[list["ProfessionalService"]] = relationship(
-    back_populates="professional",
-    cascade="all, delete-orphan",
-)
+        back_populates="professional",
+        cascade="all, delete-orphan",
+    )

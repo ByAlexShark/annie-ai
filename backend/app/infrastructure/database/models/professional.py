@@ -1,9 +1,20 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Boolean, ForeignKey, String, true
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.base import Base, TimestampMixin
+
+if TYPE_CHECKING:
+    from app.infrastructure.database.models.appointment import Appointment
+    from app.infrastructure.database.models.professional_schedule import (
+        ProfessionalSchedule,
+    )
+    from app.infrastructure.database.models.professional_service import (
+        ProfessionalService,
+    )
 
 
 class Professional(TimestampMixin, Base):
@@ -55,6 +66,6 @@ class Professional(TimestampMixin, Base):
     )
 
     professional_services: Mapped[list["ProfessionalService"]] = relationship(
-    back_populates="professional",
-    cascade="all, delete-orphan",
-)
+        back_populates="professional",
+        cascade="all, delete-orphan",
+    )

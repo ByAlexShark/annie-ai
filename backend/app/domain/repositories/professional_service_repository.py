@@ -27,3 +27,10 @@ class ProfessionalServiceRepository(ABC):
         professional_id: int,
     ) -> list[Service]:
         pass
+
+    @abstractmethod
+    async def get_professional_ids_by_service(
+        self,
+        service_id: int,
+    ) -> list[int]:
+        pass

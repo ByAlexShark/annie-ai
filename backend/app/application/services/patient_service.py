@@ -41,6 +41,16 @@ class PatientService:
 
         return patient
 
+    async def get_patient_by_phone(
+        self,
+        phone: str,
+    ) -> Patient | None:
+        normalized_phone = phone.strip()
+
+        return await self.repository.get_by_phone(
+            normalized_phone
+        )
+
     async def create_patient(
         self,
         phone: str,

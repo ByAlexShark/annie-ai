@@ -11,6 +11,20 @@ class AIChatRequest(BaseModel):
     )
 
 
+class AIProcessRequest(BaseModel):
+    message: str = Field(
+        ...,
+        min_length=1,
+        max_length=2000,
+    )
+
+    phone: str = Field(
+        ...,
+        min_length=7,
+        max_length=25,
+    )
+
+
 class AIChatResponse(BaseModel):
     response: str
 

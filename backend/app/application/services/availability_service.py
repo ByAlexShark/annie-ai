@@ -131,3 +131,47 @@ class AvailabilityService:
                 generated_slots += 1
 
         return available_slots
+
+    async def get_available_slots_by_service(
+        self,
+        service_id: int,
+        requested_date: date,
+    ) -> list[dict]:
+        professional_ids = (
+            await self.professional_service_repository
+            .get_professional_ids_by_service(service_id)
+        )
+
+        availability: list[dict] = []
+
+        for professional_id in professional_ids:
+            professional = (
+                await self.professional_repository.get_by_id(
+                    professional_id
+                )
+            )
+
+            if professional is None or not professional.active:
+                continue
+
+            slots = await self.get_available_slots(
+                professional_id=professional_id,
+                service_id=service_id,
+                requested_date=requested_date,
+            )
+
+            if not slots:
+                continue
+
+            availability.append(
+                {
+                    "professional_id": professional.id,
+                    "professional_name": (
+                        f"{professional.first_name} "
+                        f"{professional.last_name}"
+                    ),
+                    "available_slots": slots,
+                }
+            )
+
+        return availability

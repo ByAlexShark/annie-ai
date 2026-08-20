@@ -64,3 +64,21 @@ class SQLAlchemyProfessionalServiceRepository(
         )
 
         return list(result.scalars().all())
+
+    async def get_professional_ids_by_service(
+        self,
+        service_id: int,
+    ) -> list[int]:
+        result = await self.session.execute(
+            select(
+                ProfessionalService.professional_id
+            )
+            .where(
+                ProfessionalService.service_id == service_id
+            )
+            .order_by(
+                ProfessionalService.professional_id
+            )
+        )
+
+        return list(result.scalars().all())

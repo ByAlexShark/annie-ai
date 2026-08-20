@@ -24,6 +24,9 @@ from app.presentation.api.patients import (
 from app.presentation.api.appointments import (
     router as appointments_router,
 )
+from app.presentation.api.ai import (
+    router as ai_router,
+)
 
 
 api_router = APIRouter(
@@ -33,19 +36,15 @@ api_router = APIRouter(
 api_router.include_router(
     care_areas_router
 )
-
 api_router.include_router(
     services_router
 )
-
 api_router.include_router(
     professionals_router
 )
-
 api_router.include_router(
     professional_services_router
 )
-
 api_router.include_router(
     schedules_router
 )
@@ -57,4 +56,7 @@ api_router.include_router(
 )
 api_router.include_router(
     appointments_router
+)
+api_router.include_router(
+    ai_router
 )
